@@ -29,10 +29,12 @@ export class ImagesService {
     let json = JSON.stringify(image)
     return this._http.post(
       this.urlRestfulApi + '/image', json, this.jsonHeaders()
-    )
-
+    ).map(response => response.json())
   }
 
+  updateImage(image: Image) {
+
+  }
   private jsonHeaders(): Headers {
     let headers: Headers = new Headers()
     headers.append('Content-Type', 'application/json')
