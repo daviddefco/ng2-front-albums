@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
+
+import { ListAlbumsComponent } from './albums/list-albums/list-albums.component'
 
 @Component({
   selector: 'app-root',

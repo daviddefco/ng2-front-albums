@@ -21,7 +21,13 @@ export class AlbumsService {
    */
   getAlbums() {
     return this._http.get(this.urlRestfulApi)
-      .map(response => response.json()).delay(1500)
+      .map(response => { 
+        let albumList: [Album] = response.json().albums
+        for(let album of albumList) {
+          album.portraitUrl = `http://localhost:3000/image/album/${ album._id}` 
+        }
+        JSON.stringify({ albums: albumList })
+      })
   }
 
   getAlbum(idAlbum: string) {

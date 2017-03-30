@@ -1,5 +1,6 @@
 export interface Album {
     _id: string
     title: string
-    description: string
+    description: string,
+    portraitUrl: string
 }
