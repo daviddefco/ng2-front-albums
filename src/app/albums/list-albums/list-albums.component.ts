@@ -18,15 +18,14 @@ export class ListAlbumsComponent implements OnInit {
     this.visible = false
   }
 
-  ngOnInit() {
-    this._albumServices.getAlbums().subscribe(
+  ngOnInit() {   
+    this._albumServices.getAlbums()   
+    .subscribe(
       result => {
-        // this.albumList = result
+        // this.albumList = result.albums
+        console.log(result)
         this.visible = true
-      },
-      error => {
-
-      }
-    )
+      },      
+    )   
   }
 }
