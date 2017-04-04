@@ -21,74 +21,34 @@ export class AlbumsService {
     this.urlRestfulApi = 'http://localhost:3000'
   }
 
-  /**
-   * Returns all albums with small delay to simulate loading
-   */
-  getAlbums() {
-  let observable: Observable<Response>
-
-    return this._http.get(this.urlRestfulApi + '/album')    
-    .map(albumList => {
-      Observable.of(albumList.json().albums).flatMap(album =>
-        Observable.zip(
+  getAlbums(): Observable<Album> {
+    return this._http.get(this.urlRestfulApi + '/album')   
+    // flats the array of one observable to a single observable
+    .flatMap(albumList =>
+      Observable.from(albumList.json().albums)
+      // flats the array of one observable for each album in an array
+      // of a single observable
+      .flatMap(response => {
+        let album = response as Album
+        // Combine one observable for each album with the observable to 
+        // get the portrait of the album
+        return Observable.zip (
           Observable.of(album),
-           this.getFirstImage((<any>album)._id),
-            (album, image) => {
-              let response: Album = (<any>album)
-              response.portraitUrl = this.urlRestfulApi + `/image-file/${ image._id }`
-              return album
-            }           
+          this.getFirstImage(album._id),
+          (album, uri) => {
+            // Tranforms the album object adding the uri of the portrait,
+            // extracted for the second observable
+            album.portraitUrl = uri
+            return album
+          }
         )
-      )
-/*      
-      .map(albumList => {
-        return Observable.of(albumList)
       })
-      */
-/*      
-     observable = Observable.from(albumList.json().albums)
-      .flatMap(album => { 
-         let b = Observable.zip(
-          Observable.of(album),
-          this.getFirstImage((<any>album)._id),
-                (album, image) => {
-                  let response: Album = (<any>album)
-                  response.portraitUrl = this.urlRestfulApi + `/image-file/${ image._id }`
-                  return album
-                }
-          )
-          return b          
-      })   
-*/      
-    })
-
-
-/*    
-    return this._http.get(this.urlRestfulApi + '/album')
-      .flatMap(albumList => {
-        let a = Observable.from(albumList.json().albums)
-          .flatMap(album => { 
-            let b = Observable.zip(
-                Observable.of(album),
-                this.getFirstImage((<any>album)._id),
-                (album, image) => {
-                  let response: Album = (<any>album)
-                  response.portraitUrl = this.urlRestfulApi + `/image-file/${ image._id }`
-                  return album
-                }
-            )
-            return b
-          })
-          return a
-      }).map(response => {
-        console.log(response)
-      })
-      */
+    )     
   }
 
   getAlbum(idAlbum: string) {
     return this._http.get(this.urlRestfulApi + `/${ idAlbum }`)
-      .map(response => response.json()).delay(700)
+      .flatMap(response => response.json()).delay(700)
   }
 
   addAlbum(album: Album) {
@@ -109,14 +69,20 @@ export class AlbumsService {
       .map(response => response.json())
   }
 
-  getFirstImage(idAlbum: string) : Observable<any> {
+  getFirstImage(idAlbum: string) : Observable<string> {
     // If we use map we get an array of Observables with only one
     // observable, while what we want is a unique observable with
     // the emission of one object (the firt photo)
     return this._http.get(this.urlRestfulApi + `/image/album/${ idAlbum }`)
     .flatMap(imagesList => {
       return Observable.from(imagesList.json().images)
-        .take(1)        
+        // get the first image associated with the album, we ignore rest fo images
+        .take(1)
+        .map(result => {
+          let image = result as Image
+          // Return the uri instead the whole image
+          return this.urlRestfulApi + `/image-file/${ image._id }`
+        })        
     })
   }
 
