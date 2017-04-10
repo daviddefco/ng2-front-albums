@@ -12,7 +12,7 @@ import { AlbumsService } from '../albums.service'
 })
 export class ListAlbumsComponent implements OnInit {
 
-  albumList: Album[]
+  albumList: Album[] = []
   visible: boolean
   constructor(private _albumServices: AlbumsService) {
     this.visible = false
@@ -22,8 +22,9 @@ export class ListAlbumsComponent implements OnInit {
     this._albumServices.getAlbums()   
     .subscribe(
       result => {
-        // this.albumList = result.albums
-        console.log(result)
+        let album: Album = result
+        this.albumList.push(album)
+        console.log(this.albumList)
         this.visible = true
       },      
     )   

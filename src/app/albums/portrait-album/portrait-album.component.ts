@@ -13,7 +13,6 @@ import { ImagesService } from '../../images/images.service'
 export class PortraitAlbumComponent implements OnInit {
 
   @Input() album: Album
-  @Input() portraitUrl: string
   constructor(private _imageService: ImagesService) { }
 
   ngOnInit() {

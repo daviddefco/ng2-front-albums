@@ -81,7 +81,7 @@ export class AlbumsService {
         .map(result => {
           let image = result as Image
           // Return the uri instead the whole image
-          return this.urlRestfulApi + `/image-file/${ image._id }`
+          return this.urlRestfulApi + `/image-file/${ image.fileName}`
         })        
     })
   }
