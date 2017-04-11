@@ -6,24 +6,31 @@ import { HttpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 
 import { AlertModule } from 'ng2-bootstrap';
-import { AllAlbumsComponent } from './albums/all-albums/all-albums.component';
 import { ListAlbumsComponent } from './albums/list-albums/list-albums.component';
 import { PortraitAlbumComponent } from './albums/portrait-album/portrait-album.component'
+
+import { routing, appRoutingProviders } from './app.routing';
+import { AddAlbumComponent } from './albums/add-album/add-album.component';
+import { DetailAlbumComponent } from './albums/detail-album/detail-album.component'
 
 @NgModule({
   declarations: [
     AppComponent,
-    AllAlbumsComponent,
     ListAlbumsComponent,
-    PortraitAlbumComponent
+    PortraitAlbumComponent,
+    AddAlbumComponent,
+    DetailAlbumComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
-    AlertModule.forRoot()
+    AlertModule.forRoot(),
+    routing
   ],
-  providers: [],
+  providers: [
+    appRoutingProviders
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

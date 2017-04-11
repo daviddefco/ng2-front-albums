@@ -16,6 +16,12 @@ import { Image } from "../images/image";
 export class AlbumsService {
 
   public urlRestfulApi: string
+  private placeholder: Image = {
+    _id: '',
+    title: '',
+    album: { _id: '', description: '', title: '', portraitUrl: '' },
+    fileName: 'http://www.billedbladet.dk/sites/billedbladet.dk/files/lost_media/48998.jpg'
+  }
 
   constructor(private _http: Http) { 
     this.urlRestfulApi = 'http://localhost:3000'
@@ -47,20 +53,20 @@ export class AlbumsService {
   }
 
   getAlbum(idAlbum: string) {
-    return this._http.get(this.urlRestfulApi + `/${ idAlbum }`)
+    return this._http.get(this.urlRestfulApi + `/album/${ idAlbum }`)
       .flatMap(response => response.json()).delay(700)
   }
 
   addAlbum(album: Album) {
     let json = JSON.stringify(album)
-    return this._http.post(this.urlRestfulApi, json, { headers: this.jsonHeaders() })
+    return this._http.post(this.urlRestfulApi + '/album', json, { headers: this.jsonHeaders() })
       .map(response => response.json())
   }
 
   updateAlbum(album: Album) {
     let json = JSON.stringify(album)
     return this._http.put(
-      this.urlRestfulApi + `/${ album._id }`, json, { headers: this.jsonHeaders() }
+      this.urlRestfulApi + `/album/${ album._id }`, json, { headers: this.jsonHeaders() }
     )
   }
 
@@ -75,13 +81,17 @@ export class AlbumsService {
     // the emission of one object (the firt photo)
     return this._http.get(this.urlRestfulApi + `/image/album/${ idAlbum }`)
     .flatMap(imagesList => {
-      return Observable.from(imagesList.json().images)
+      let list: Image[] = imagesList.json().images
+      list.push(this.placeholder) 
+      return Observable.from(list)
         // get the first image associated with the album, we ignore rest fo images
         .take(1)
         .map(result => {
           let image = result as Image
           // Return the uri instead the whole image
-          return this.urlRestfulApi + `/image-file/${ image.fileName}`
+          return image == this.placeholder ?
+            image.fileName
+            : this.urlRestfulApi + `/image-file/${ image.fileName}`
         })        
     })
   }

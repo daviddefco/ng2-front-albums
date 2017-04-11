@@ -1,3 +1,16 @@
+<div class="jumbotron">
+  <div class="container">
+    <div class="col-md-10">
+      <h1>{{ title }}</h1>
+      <h3>Remember Your Trips</h3>
+      <p>A simple application to organise your images in trip albums
+      </p>
+    </div>
+    <div class="col-md-2 new-album">
+      <a [routerLink]="[ '/add-album' ]"><i class="glyphicon glyphicon glyphicon-th pull-righ"></i></a>
+    </div>
+  </div>
+</div>
 <div *ngIf="visible">
   <app-portrait-album *ngFor="let album of albumList" [album]="album">
   </app-portrait-album>  
