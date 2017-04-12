@@ -20,14 +20,16 @@ export class AlbumsService {
     _id: '',
     title: '',
     album: { _id: '', description: '', title: '', portraitUrl: '' },
-    fileName: 'http://www.billedbladet.dk/sites/billedbladet.dk/files/lost_media/48998.jpg'
+    fileName: '',
+    url: 'http://www.billedbladet.dk/sites/billedbladet.dk/files/lost_media/48998.jpg',
+
   }
 
   constructor(private _http: Http) { 
     this.urlRestfulApi = 'http://localhost:3000'
   }
 
-  getAlbums(): Observable<Album> {
+  getAlbums(): Observable<Album[]> {
     return this._http.get(this.urlRestfulApi + '/album')   
     // flats the array of one observable to a single observable
     .flatMap(albumList =>
@@ -49,12 +51,23 @@ export class AlbumsService {
           }
         )
       })
+      .reduce((albumList, album) => {
+        albumList.push(album)
+        return albumList
+      }, [])
     )     
   }
 
   getAlbum(idAlbum: string) {
-    return this._http.get(this.urlRestfulApi + `/album/${ idAlbum }`)
-      .flatMap(response => response.json()).delay(700)
+    return Observable.zip(
+      this._http.get(this.urlRestfulApi + `/album/${ idAlbum }`)
+        .map(response => response.json().album),
+       this.getFirstImage(idAlbum),
+       (album, uri) => {
+         album.portraitUrl = uri
+         return album
+       }
+    )
   }
 
   addAlbum(album: Album) {
@@ -90,7 +103,7 @@ export class AlbumsService {
           let image = result as Image
           // Return the uri instead the whole image
           return image == this.placeholder ?
-            image.fileName
+            image.url
             : this.urlRestfulApi + `/image-file/${ image.fileName}`
         })        
     })

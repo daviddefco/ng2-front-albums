@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 
 import { Http, Response, Headers } from '@angular/http'
 import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/reduce'
 import 'rxjs/add/operator/delay'
+import 'rxjs/add/observable/of'
+
+import { Observable } from 'rxjs/Observable'
 
 import { Image } from './image'
 
@@ -16,9 +20,14 @@ export class ImagesService {
     this.urlRestfulApi = 'http://localhost:3000'
   }
 
-  getImages() {
+  getImages(): Observable<Image[]> {
     return this._http.get(this.urlRestfulApi + '/image')
-      .map(response => response.json()).delay(1250)
+      .flatMap(response => this.transformedImagesObservable(response))
+  }
+
+  getImagesOfAlbum(idAlbum: string) {
+    return this._http.get(this.urlRestfulApi + `/image/album/${ idAlbum }`)
+      .flatMap(response => this.transformedImagesObservable(response)) 
   }
 
   getImage(imageId: string) {
@@ -49,6 +58,20 @@ export class ImagesService {
   updateImage(image: Image) {
 
   }
+
+  private transformedImagesObservable(response): Observable<Image[]> {
+    return Observable.of(response.json().images)
+      .map(response => {
+        let image: Image = response
+        image.url = this.urlRestfulApi + `/image-file/${ image.fileName }`
+        return image
+      })
+      .reduce((acc, val) => {
+        acc.push(val)
+        return acc
+      }, [])
+  }
+
   private jsonHeaders(): Headers {
     let headers: Headers = new Headers()
     headers.append('Content-Type', 'application/json')

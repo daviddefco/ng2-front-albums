@@ -11,7 +11,8 @@ import { PortraitAlbumComponent } from './albums/portrait-album/portrait-album.c
 
 import { routing, appRoutingProviders } from './app.routing';
 import { AddAlbumComponent } from './albums/add-album/add-album.component';
-import { DetailAlbumComponent } from './albums/detail-album/detail-album.component'
+import { DetailAlbumComponent } from './albums/detail-album/detail-album.component';
+import { PortraitImageComponent } from './images/portrait-image/portrait-image.component'
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { DetailAlbumComponent } from './albums/detail-album/detail-album.compone
     ListAlbumsComponent,
     PortraitAlbumComponent,
     AddAlbumComponent,
-    DetailAlbumComponent
+    DetailAlbumComponent,
+    PortraitImageComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,10 @@
+.album-description {
+   padding-top: 20px;
+   background: #223038; 
+   padding-bottom: 100%;
+   margin-bottom: -100%;   
+   overflow-y: hidden;
+}
+h4 {
+   color: darkcyan;
+}

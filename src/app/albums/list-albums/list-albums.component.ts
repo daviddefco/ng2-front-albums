@@ -21,9 +21,8 @@ export class ListAlbumsComponent implements OnInit {
   ngOnInit() {   
     this._albumServices.getAlbums()   
     .subscribe(
-      result => {
-        let album: Album = result
-        this.albumList.push(album)
+      result => {        
+        this.albumList = result
         console.log(this.albumList)
         this.visible = true
       },      
