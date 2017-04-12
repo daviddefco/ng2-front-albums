@@ -48,11 +48,13 @@ export class DetailAlbumComponent implements OnInit {
       Observable.zip(
         this._albumService.getAlbum(idAlbum),
         this._imageService.getImagesOfAlbum(this.album._id),
-        (album, images) => {
-          this.album = album
-          this.imageList = images
+        (album, images) => {          
+          return { album: album, images: images }
         }
-      ).subscribe()
+      ).subscribe(result => {
+        this.album = result.album
+        this.imageList = result.images
+      })
     })
   }
 }
