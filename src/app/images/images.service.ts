@@ -4,7 +4,6 @@ import { Http, Response, Headers } from '@angular/http'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/reduce'
 import 'rxjs/add/operator/delay'
-import 'rxjs/add/observable/of'
 
 import { Observable } from 'rxjs/Observable'
 
@@ -27,7 +26,9 @@ export class ImagesService {
 
   getImagesOfAlbum(idAlbum: string) {
     return this._http.get(this.urlRestfulApi + `/image/album/${ idAlbum }`)
-      .flatMap(response => this.transformedImagesObservable(response)) 
+      .flatMap(response => { 
+        return this.transformedImagesObservable(response)
+      }) 
   }
 
   getImage(imageId: string) {
@@ -60,10 +61,12 @@ export class ImagesService {
   }
 
   private transformedImagesObservable(response): Observable<Image[]> {
-    return Observable.of(response.json().images)
-      .map(response => {
-        let image: Image = response
-        image.url = this.urlRestfulApi + `/image-file/${ image.fileName }`
+    let imagesList: Image[] = response.json().images
+    return Observable.from(imagesList)
+      .map(image => {
+        image.url = image.fileName ?
+          this.urlRestfulApi + `/image-file/${ image.fileName }`
+          : this.imagePlaceHolderUrl
         return image
       })
       .reduce((acc, val) => {
